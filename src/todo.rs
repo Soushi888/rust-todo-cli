@@ -1,11 +1,11 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Task {
-    task: String,
-    description: String,
-    date: String,
-    completed: bool,
+    pub task: String,
+    pub description: String,
+    pub date: String,
+    pub completed: bool,
 }
 
 impl Task {
