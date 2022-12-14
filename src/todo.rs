@@ -20,6 +20,11 @@ impl Task {
 	}
 
 	pub fn add(self, mut todo_list: TodoList) {
+		let task = todo_list.iter().find(|t| t.task == self.task);
+		if task.is_some() {
+			println!("Task \"{}\" already exists", task.unwrap().task);
+			return;
+		}
 		todo_list.push(self.clone());
 		save_json(todo_list).unwrap();
 		println!("Task \"{}\" added", self.task);
@@ -33,6 +38,19 @@ impl Task {
 		if is_removed {
 			save_json(todo_list).unwrap();
 			println!("Task \"{}\" removed", self.task);
+		} else {
+			println!("Task \"{}\" not found", self.task);
+		}
+	}
+
+	pub fn update(self, mut todo_list: TodoList) {
+		let task = todo_list.iter_mut().find(|t| t.task == self.task);
+		if task.is_some() {
+			let task = task.unwrap();
+			task.description = self.description;
+			task.date = self.date;
+			save_json(todo_list).unwrap();
+			println!("Task \"{}\" updated", self.task);
 		} else {
 			println!("Task \"{}\" not found", self.task);
 		}

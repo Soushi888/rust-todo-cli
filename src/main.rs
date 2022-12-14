@@ -50,6 +50,14 @@ fn main() {
 
 			task.remove(todo_list);
 		}
+		"update" => {
+			let task = Task::new(
+				args.task.unwrap_or("Undefined".to_string()),
+				(args.description),
+				args.date.unwrap());
+
+			task.update(todo_list);
+		}
 		"complete" => {
 			let task = args.task.unwrap();
 			let task = todo_list.iter_mut().find(|t| t.task == task).unwrap();
