@@ -1,6 +1,7 @@
 mod todo;
 mod file;
 
+use std::process;
 use clap::Parser;
 use chrono;
 use crate::todo::*;
@@ -27,9 +28,21 @@ fn main() {
 	let now = chrono::Local::now().format("%Y-%m-%d").to_string();
 	if args.date.is_none() { args.date = Some(now); }
 
-	let mut todo_list: TodoList = load_json().unwrap();
+	let mut todo_list = match load_json() {
+		Ok(todo_list) => todo_list,
+		Err(e) => {
+			println!("Error: {}", e);
+			process::exit(1);
+		}
+	};
+
 	match args.method.as_str() {
 		"view" => {
+			if todo_list.is_empty() {
+				println!("No tasks");
+				return;
+			}
+
 			for task in &todo_list {
 				println!("{:#?}", task);
 			}
@@ -43,32 +56,38 @@ fn main() {
 			task.add(todo_list);
 		}
 		"remove" => {
-			let task = Task::new(
+			Task::new(
 				args.task.unwrap_or("Undefined".to_string()),
 				args.description,
-				args.date.unwrap());
-
-			task.remove(todo_list);
+				args.date.unwrap())
+				.remove(todo_list);
 		}
 		"update" => {
-			let task = Task::new(
+			Task::new(
 				args.task.unwrap_or("Undefined".to_string()),
-				(args.description),
-				args.date.unwrap());
-
-			task.update(todo_list);
+				args.description,
+				args.date.unwrap())
+				.update(todo_list);
 		}
 		"complete" => {
 			let task = args.task.unwrap();
-			let task = todo_list.iter_mut().find(|t| t.task == task).unwrap();
-			task.complete();
-			save_json(todo_list).unwrap();
+			let task = todo_list.iter_mut().find(|t| t.task == task);
+			if task.is_some() {
+				task.unwrap().complete();
+				save_json(todo_list).unwrap();
+			} else {
+				println!("Task \"{}\" not found", task.unwrap().task);
+			}
 		}
 		"uncomplete" => {
 			let task = args.task.unwrap();
-			let task = todo_list.iter_mut().find(|t| t.task == task).unwrap();
-			task.uncomplete();
-			save_json(todo_list).unwrap();
+			let task = todo_list.iter_mut().find(|t| t.task == task);
+			if task.is_some() {
+				task.unwrap().uncomplete();
+				save_json(todo_list).unwrap();
+			} else {
+				println!("Task \"{}\" not found", task.unwrap().task);
+			}
 		}
 		"status" => {
 			let task = args.task.unwrap();
