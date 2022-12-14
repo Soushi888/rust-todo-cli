@@ -99,6 +99,10 @@ fn main() {
 				println!("Task \"{}\" not found", args.task.unwrap());
 			}
 		}
+		"clear" => {
+			save_json(Vec::new()).unwrap();
+			println!("Todo list cleared");
+		}
 		_ => println!("Invalid command"),
 	}
 }
