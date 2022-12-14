@@ -65,10 +65,6 @@ impl Task {
 		self.completed = false;
 		println!("Task \"{}\" uncompleted", self.task);
 	}
-
-	pub fn is_completed(&self) -> bool {
-		self.completed
-	}
 }
 
 pub type TodoList = Vec<Task>;

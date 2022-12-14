@@ -70,29 +70,34 @@ fn main() {
 				.update(todo_list);
 		}
 		"complete" => {
-			let task = args.task.unwrap();
+			let task = args.task.clone().unwrap();
 			let task = todo_list.iter_mut().find(|t| t.task == task);
 			if task.is_some() {
 				task.unwrap().complete();
 				save_json(todo_list).unwrap();
 			} else {
-				println!("Task \"{}\" not found", task.unwrap().task);
+				println!("Task \"{}\" not found", args.task.unwrap());
 			}
 		}
 		"uncomplete" => {
-			let task = args.task.unwrap();
+			let task = args.task.clone().unwrap();
 			let task = todo_list.iter_mut().find(|t| t.task == task);
 			if task.is_some() {
 				task.unwrap().uncomplete();
 				save_json(todo_list).unwrap();
 			} else {
-				println!("Task \"{}\" not found", task.unwrap().task);
+				println!("Task \"{}\" not found", args.task.unwrap());
 			}
 		}
 		"status" => {
-			let task = args.task.unwrap();
-			let task = todo_list.iter().find(|t| t.task == task).unwrap();
-			println!("Task \"{}\" is {}", task.task, if task.is_completed() { "completed" } else { "not completed" });
+			let task = args.task.clone().unwrap();
+			let task = todo_list.iter().find(|t| t.task == task);
+			if task.is_some() {
+				println!("Task \"{}\" is {}", task.unwrap().task,
+								 if task.unwrap().completed { "completed" } else { "not completed" });
+			} else {
+				println!("Task \"{}\" not found", args.task.unwrap());
+			}
 		}
 		_ => println!("Invalid command"),
 	}
