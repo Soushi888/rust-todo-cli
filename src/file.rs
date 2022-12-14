@@ -10,7 +10,8 @@ pub fn load_json() -> Result<TodoList, Error> {
     Ok(todo_list)
 }
 
-pub fn save_json(todo_list: TodoList) -> Result<(), Error> {
+pub fn save_json(mut todo_list: TodoList) -> Result<(), Error> {
+    todo_list.sort_by_key(|t| t.date.clone());
     let json = serde_json::to_string_pretty(&todo_list).unwrap();
     fs::write("todo.json", json)?;
 
