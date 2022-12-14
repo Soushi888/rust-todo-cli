@@ -12,7 +12,7 @@ use crate::file::*;
 #[clap(author = "Soushi888", version)]
 /// Simple todo cli app
 struct Args {
-	/// Action to do (add, remove, view, complete, uncomplete, status)
+	/// Action to do (add, remove, view, complete, uncomplete, status, clear)
 	method: String,
 	/// Task to do
 	task: Option<String>,
