@@ -11,15 +11,14 @@ pub fn load_json() -> Result<TodoList, Error> {
 		.create(true)
 		.open("todo.json")?;
 
-	let todo_list = if file.metadata()?.len() == 0 {
+	if let Ok(todo_list) = from_reader(&file) {
+		Ok(todo_list)
+	} else {
 		let todo_list = Vec::new();
 		to_writer(file, &todo_list)?;
-		todo_list
-	} else {
-		from_reader(file)?
-	};
-
-	Ok(todo_list)
+		println!("Created new todo list");
+		Ok(todo_list)
+	}
 }
 
 pub fn save_json(mut todo_list: TodoList) -> Result<(), Error> {

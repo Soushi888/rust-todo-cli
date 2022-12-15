@@ -3,7 +3,6 @@ mod file;
 
 use std::process;
 use clap::Parser;
-use chrono;
 use crate::todo::*;
 use crate::file::*;
 
@@ -24,16 +23,12 @@ struct Args {
 }
 
 fn main() {
-	let mut args = Args::parse();
-	let now = chrono::Local::now().format("%Y-%m-%d").to_string();
-	if args.date.is_none() { args.date = Some(now); }
+	let args = Args::parse();
 
-	let mut todo_list = match load_json() {
-		Ok(todo_list) => todo_list,
-		Err(e) => {
-			println!("Error: {}", e);
-			process::exit(1);
-		}
+	let mut todo_list = if let Ok(todo_list) = load_json() {
+		todo_list
+	} else {
+		process::exit(1);
 	};
 
 	match args.method.as_str() {
@@ -49,9 +44,12 @@ fn main() {
 		}
 		"add" => {
 			let task = Task::new(
-				args.task.unwrap_or("Undefined".to_string()),
+				args.task.unwrap_or_else(|| {
+					println!("Task is required");
+					process::exit(1);
+				}),
 				args.description,
-				args.date.unwrap());
+				args.date.unwrap_or_default());
 
 			task.add(todo_list);
 		}
@@ -64,9 +62,12 @@ fn main() {
 		}
 		"update" => {
 			Task::new(
-				args.task.unwrap_or("Undefined".to_string()),
+				args.task.unwrap_or_else(|| {
+					println!("Task is required");
+					process::exit(1);
+				}),
 				args.description,
-				args.date.unwrap())
+				args.date.unwrap_or_default())
 				.update(todo_list);
 		}
 		"complete" => {

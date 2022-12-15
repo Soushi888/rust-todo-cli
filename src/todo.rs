@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::file::save_json;
 
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Task {
 	pub task: String,
@@ -19,7 +20,10 @@ impl Task {
 		}
 	}
 
-	pub fn add(self, mut todo_list: TodoList) {
+	pub fn add(mut self, mut todo_list: TodoList) {
+		let now = chrono::Local::now().format("%Y-%m-%d").to_string();
+		if self.date.is_empty() { self.date = now; }
+
 		let task = todo_list.iter().find(|t| t.task == self.task);
 		if task.is_some() {
 			println!("Task \"{}\" already exists", task.unwrap().task);
@@ -47,8 +51,8 @@ impl Task {
 		let task = todo_list.iter_mut().find(|t| t.task == self.task);
 		if task.is_some() {
 			let task = task.unwrap();
-			task.description = self.description;
-			task.date = self.date;
+			task.description = if self.description.is_empty() { task.description.clone() } else { self.description };
+			task.date = if self.date.is_empty() { task.date.clone() } else { self.date };
 			save_json(todo_list).unwrap();
 			println!("Task \"{}\" updated", self.task);
 		} else {
