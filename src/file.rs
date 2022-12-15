@@ -11,17 +11,16 @@ pub fn load_json() -> Result<TodoList, Error> {
 		.create(true)
 		.open("todo.json")?;
 
-	if let Ok(todo_list) = from_reader(&file) {
-		Ok(todo_list)
+	if let Ok(tasks) = from_reader(&file) {
+		Ok(TodoList { tasks })
 	} else {
-		let todo_list = Vec::new();
-		to_writer(file, &todo_list)?;
+		to_writer(file, &Vec::<Task>::new())?;
 		println!("Created new todo list");
-		Ok(todo_list)
+		Ok(TodoList::new())
 	}
 }
 
-pub fn save_json(mut todo_list: TodoList) -> Result<(), Error> {
+pub fn save_json(mut todo_list: Vec<Task>) -> Result<(), Error> {
 	todo_list.sort_by_key(|t| t.date.clone());
 	let json = serde_json::to_string_pretty(&todo_list).unwrap();
 	fs::write("todo.json", json)?;
