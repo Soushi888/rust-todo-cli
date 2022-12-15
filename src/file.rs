@@ -1,7 +1,8 @@
 use std::fs;
 use std::io::{Error};
 use std::fs::{OpenOptions};
-use crate::todo::*;
+use crate::todo_list::*;
+use crate::task::*;
 use serde_json::{from_reader, to_writer};
 
 pub fn load_json() -> Result<TodoList, Error> {

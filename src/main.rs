@@ -1,9 +1,11 @@
-mod todo;
+mod todo_list;
 mod file;
+mod task;
 
 use std::process;
 use clap::{Args, Parser, Subcommand};
-use crate::todo::*;
+use crate::todo_list::*;
+use crate::task::*;
 use crate::file::*;
 
 
@@ -80,24 +82,28 @@ fn main() {
 	match cli.command {
 		View => { todo_list.list(); }
 		Add(args) => {
-			let task = Task::new(args.name,
-													 args.description.unwrap_or_default(),
-													 args.date.unwrap_or_default(),
-													 None);
+			let task = Task::new(
+				args.name,
+				args.description.unwrap_or_default(),
+				args.date.unwrap_or_default(),
+				None,
+			);
 			task.add(todo_list);
 		}
 		Remove(args) => {
-			let task = Task::new(args.name,
-													 String::new(),
-													 String::new(),
-													 None);
+			let task = Task::new(
+				args.name,
+				String::new(),
+				String::new(),
+				None,
+			);
 			task.remove(todo_list);
 		}
 		Update(args) => {
 			if args.new_name.is_none() && args.description.is_none()
 				&& args.date.is_none() && args.completed.is_none() {
 				println!("No value to update");
-				return;
+				process::exit(1);
 			}
 
 			let task = get_task(&todo_list, &args.name);
@@ -120,7 +126,7 @@ fn main() {
 		Status(args) => {
 			let task = get_task(&todo_list, &args.name);
 			task.status();
-		},
+		}
 		ClearCompleted => {
 			todo_list.clear_completed();
 		}
