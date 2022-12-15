@@ -121,7 +121,13 @@ impl TodoList {
 		self.tasks.push(task);
 	}
 
-	pub fn clear(&mut self) {
+	pub fn clear_completed(&mut self) {
+		self.tasks.retain(|t| !t.completed);
+		save_json(self.tasks.clone()).unwrap();
+		println!("Completed tasks cleared");
+	}
+
+	pub fn clear_all(&mut self) {
 		self.tasks.clear();
 		println!("Todo list cleared");
 	}

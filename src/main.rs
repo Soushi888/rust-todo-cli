@@ -17,32 +17,40 @@ struct Cli {
 
 #[derive(Subcommand, Debug, Clone)]
 enum Commands {
-	/// Add a new task
+	/// View all tasks
 	View,
 	/// Add a new task
-	Add(TaskArgs),
+	Add(AddTaskArgs),
 	/// Remove a task
-	Remove(TaskArgs),
+	Remove(TaskNameArg),
 	/// Update a task
 	Update(UpdateTaskArgs),
 	/// Complete a task
-	Complete(TaskArgs),
+	Complete(TaskNameArg),
 	/// Uncomplete a task
-	Uncomplete(TaskArgs),
+	Uncomplete(TaskNameArg),
 	/// Show the status of the task
-	Status(TaskArgs),
+	Status(TaskNameArg),
+	/// Clear completed tasks
+	ClearCompleted,
 	/// Clear all tasks
-	Clear,
+	ClearAll,
 }
 
 #[derive(Args, Debug, Clone)]
-struct TaskArgs {
+struct AddTaskArgs {
 	/// Task name
 	name: String,
 	/// Task description
 	description: Option<String>,
 	/// Task date
 	date: Option<String>,
+}
+
+#[derive(Args, Debug, Clone)]
+struct TaskNameArg {
+	/// Task name
+	name: String,
 }
 
 #[derive(Args, Debug, Clone)]
@@ -80,8 +88,8 @@ fn main() {
 		}
 		Remove(args) => {
 			let task = Task::new(args.name,
-													 args.description.unwrap_or_default(),
-													 args.date.unwrap_or_default(),
+													 String::new(),
+													 String::new(),
 													 None);
 			task.remove(todo_list);
 		}
@@ -112,9 +120,12 @@ fn main() {
 		Status(args) => {
 			let task = get_task(&todo_list, &args.name);
 			task.status();
+		},
+		ClearCompleted => {
+			todo_list.clear_completed();
 		}
-		Clear => {
-			todo_list.clear();
+		ClearAll => {
+			todo_list.clear_all();
 			save_json(todo_list.tasks).unwrap();
 		}
 	}
