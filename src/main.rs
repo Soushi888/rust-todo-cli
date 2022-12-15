@@ -1,9 +1,8 @@
 mod todo;
 mod file;
 
-use std::ops::Deref;
 use std::process;
-use clap::{arg, Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use crate::todo::*;
 use crate::file::*;
 
