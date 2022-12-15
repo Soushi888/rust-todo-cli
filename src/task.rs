@@ -1,4 +1,5 @@
 use std::fmt::Display;
+use std::process;
 use serde::{Serialize, Deserialize};
 use crate::file::save_json;
 use crate::todo_list::TodoList;
@@ -36,7 +37,7 @@ impl Task {
 		let task = todo_list.find(&self.name);
 		if task.is_some() {
 			println!("Task \"{}\" already exists", task.unwrap().name);
-			return;
+			process::exit(1);
 		}
 		todo_list.tasks.push(self.clone());
 		save_json(todo_list.tasks).unwrap();
@@ -53,6 +54,7 @@ impl Task {
 			println!("Task \"{}\" removed", self.name);
 		} else {
 			println!("Task \"{}\" not found", self.name);
+			process::exit(1);
 		}
 	}
 
