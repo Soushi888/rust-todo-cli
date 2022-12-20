@@ -154,7 +154,8 @@ fn main() {
 				args.date.unwrap_or_default(),
 				None,
 			);
-			task.add(todo_list);
+			task.add(&mut todo_list);
+			save_json(todo_list.tasks).unwrap();
 		}
 		Remove(args) => {
 			let task = Task::new(
@@ -163,7 +164,8 @@ fn main() {
 				String::new(),
 				None,
 			);
-			task.remove(todo_list);
+			task.remove(&mut todo_list);
+			save_json(todo_list.tasks).unwrap();
 		}
 		Update(args) => {
 			if args.new_name.is_none() && args.description.is_none()
@@ -179,15 +181,18 @@ fn main() {
 				args.date.unwrap_or(task.date.clone()),
 				Some(args.completed.unwrap_or(task.completed)),
 			);
-			task.update(todo_list, new_task);
+			task.update(&mut todo_list, new_task);
+			save_json(todo_list.tasks).unwrap();
 		}
 		Complete(args) => {
 			let task = get_task(&todo_list, &args.name);
-			task.complete(todo_list);
+			task.complete(&mut todo_list);
+			save_json(todo_list.tasks).unwrap();
 		}
 		Uncomplete(args) => {
 			let task = get_task(&todo_list, &args.name);
-			task.uncomplete(todo_list);
+			task.uncomplete(&mut todo_list);
+			save_json(todo_list.tasks).unwrap();
 		}
 		Status(args) => {
 			let task = get_task(&todo_list, &args.name);
@@ -195,6 +200,7 @@ fn main() {
 		}
 		ClearCompleted => {
 			todo_list.clear_completed();
+			save_json(todo_list.tasks).unwrap();
 		}
 		ClearAll => {
 			todo_list.clear_all();

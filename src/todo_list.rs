@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use crate::file::save_json;
 use crate::task::Task;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -38,7 +37,6 @@ impl TodoList {
 
 	pub fn clear_completed(&mut self) {
 		self.tasks.retain(|t| !t.completed);
-		save_json(self.tasks.clone()).unwrap();
 		println!("Completed tasks cleared");
 	}
 
